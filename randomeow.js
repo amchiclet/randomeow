@@ -50,15 +50,27 @@ function playSound(which, when) {
   source.start(when);
 }
 
+function isInteger(s) {
+  for (i = 0; i < s.length; ++i) {
+    if (s[i] >= 0 && s[i] <= 9) {
+      continue;
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
 function randomSounds() {
   var startTime = context.currentTime + 1;
   var howLong = document.getElementById('howLong').value;
-  var howOften = document.getElementById('howOften').value;
-  if (howLong < 1 || howLong > 60) {
+  if (!isInteger(howLong) || howLong < 1 || howLong > 60) {
     alert('invalid number for step 1');
     return;
   }
-  if (howOften < 1 || howOften > 100) {
+    
+  var howOften = document.getElementById('howOften').value;
+  if (!isInteger(howOften) || howOften < 1 || howOften > 100) {
     alert('invalid number for step 2');
     return;
   }
