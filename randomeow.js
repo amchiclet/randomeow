@@ -29,12 +29,14 @@ function loadSound(index) {
       request.response,
       function (buffer) {
         buffers[index] = buffer;
-        console.log(index);
         for (i = 0; i < urls.length; ++i) {
           if (!(i in buffers)) {
             return;
           }
         }
+        var button = document.getElementById('playSoundsButton');
+        button.disabled = false;
+        button.value = 'Listen';
       },
       alert);
   }
@@ -50,14 +52,14 @@ function playSound(which, when) {
 
 function randomSounds() {
   var startTime = context.currentTime + 1;
-  var howLong = document.getElementById("howLong").value;
-  var howOften = document.getElementById("howOften").value;
+  var howLong = document.getElementById('howLong').value;
+  var howOften = document.getElementById('howOften').value;
   if (howLong < 1 || howLong > 60) {
-    alert("invalid number for step 1");
+    alert('invalid number for step 1');
     return;
   }
   if (howOften < 1 || howOften > 100) {
-    alert("invalid number for step 2");
+    alert('invalid number for step 2');
     return;
   }
   for (i = 0; i < howOften; ++i) {

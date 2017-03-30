@@ -1,29 +1,35 @@
 <html>
 <head>
 <style>
-.footer {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 50px;
-}
-
+#content { width: 400px; margin: 0 auto;}
+h1,h2 { margin: 0; }
+input { margin: 10px; }
+hr { margin-bottom: 10px; }
 </style>
 <script src="randomeow.js"></script>
 </head>
 <body>
+
+<div id="content">
+
 <div><h1>Random Meows</h1></div>
+
+<hr />
 
 <div><h2>Step 1: How long? (Enter 1-60)</h2>
 <input id="howLong" value=10 style="width:50px;"> seconds.
 </div>
 
 <div><h2>Step 2: How many? (Enter 1-100)</h2>
-<input id="howOften" value=15 style="width:50px;"> meows.
+<input id="howOften" value=30 style="width:50px;"> meows.
 </div>
 
-<div><h2>Step 3:</h2> <input type="button" value="Listen" onclick=randomSounds()></div>
-<div class="footer">Tested on Chrome 57. Source code available <a href="https://github.com/amchiclet/randomeow">here</a></div>
+<div><h2>Step 3:</h2> <input type="button" id="playSoundsButton" value="Loading sounds ..." disabled onclick=randomSounds()></div>
+
+<hr />
+
+<div><a href="https://github.com/amchiclet/randomeow"><img src="GitHub_Logo.png" border="1"></a></div>
+
+</div>
 <body>
 </html>
