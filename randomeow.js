@@ -62,6 +62,10 @@ function isInteger(s) {
 }
 
 function randomSounds() {
+  // The web audio API needs a user gesture before it can
+  // actually play something.
+  context.resume();
+
   var startTime = context.currentTime + 1;
   var howLong = document.getElementById('howLong').value;
   if (!isInteger(howLong) || howLong < 1 || howLong > 60) {
