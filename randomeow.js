@@ -1,7 +1,7 @@
 var buffers = [];
 var context;
 var urls = ['cat1.mp3', 'cat2.mp3', 'cat3.mp3', 'cat4.mp3', 'cat5.mp3', 'cat6.mp3', 'cat7.mp3', 'cat8.mp3'];
-var allImages = ['cat1.png', 'cat2.png', 'cat3.png', 'cat4.png', 'cat5.png', 'cat6.png', 'catborder1.png', 'catborder2.png'];
+var allImages = ['cat1.png', 'cat2.png', 'cat3.png', 'cat5.png', 'cat6.png', 'catborder1.png', 'catborder2.png'];
 var borderImages = { 'catborder1.png': true, 'catborder2.png': true };
 var soundsLoaded = false;
 
@@ -125,10 +125,13 @@ function randomMeow() {
 
   var howOften = document.getElementById('intensity').value;
   var howLong = howOften <= 5 ? 1 : 5;
-  // Image size range shrinks with intensity: 150-200px at 1, 10-50px at 999
+  // Image size range: mostly normal with occasional giants
+  // At intensity 1: 150-200px, at 999: 10-50px
+  // ~10% chance of a crazy big one (up to 5x normal max)
   var t = (howOften - 1) / 998;
   var minSize = Math.round(150 - t * 140);
   var maxSize = Math.round(200 - t * 150);
+  var crazyMaxSize = maxSize * 5;
 
   // Build array of times, guaranteeing at least 1 per second
   var times = [];
@@ -146,7 +149,12 @@ function randomMeow() {
     var imageSrc = allImages[whichImage];
     var when = times[i];
     playSound(whichSound, when);
-    var imgSize = Math.round(minSize + Math.random() * (maxSize - minSize));
+    var imgSize;
+    if (Math.random() < 0.1) {
+      imgSize = Math.round(maxSize + Math.random() * (crazyMaxSize - maxSize));
+    } else {
+      imgSize = Math.round(minSize + Math.random() * (maxSize - minSize));
+    }
     if (borderImages[imageSrc]) {
       playBorderImage(imageSrc, when, imgSize);
     } else {
