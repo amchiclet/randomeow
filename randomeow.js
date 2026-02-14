@@ -1,6 +1,10 @@
 var buffers = [];
 var context;
 var urls = ['cat1.mp3', 'cat2.mp3', 'cat3.mp3', 'cat4.mp3', 'cat5.mp3', 'cat6.mp3', 'cat7.mp3', 'cat8.mp3'];
+var allImages = ['cat1.png', 'cat2.png', 'cat3.png', 'cat4.png', 'cat5.png', 'cat6.png', 'catborder1.png', 'catborder2.png'];
+var borderImages = { 'catborder1.png': true, 'catborder2.png': true };
+var soundsLoaded = false;
+
 
 function init() {
   try {
@@ -34,9 +38,10 @@ function loadSound(index) {
             return;
           }
         }
-        var button = document.getElementById('playSoundsButton');
-        button.disabled = false;
-        button.value = 'Listen';
+        soundsLoaded = true;
+        var btn = document.getElementById('start-btn');
+        btn.disabled = false;
+        btn.innerHTML = document.getElementById('intensity').value + '<br>Meows!';
       },
       alert);
   }
@@ -44,45 +49,130 @@ function loadSound(index) {
 }
 
 function playSound(which, when) {
-  var source = context.createBufferSource();
-  source.buffer = buffers[which];
-  source.connect(context.destination);
-  source.start(when);
+  setTimeout(function() {
+    var source = context.createBufferSource();
+    source.buffer = buffers[which];
+    source.connect(context.destination);
+    source.start(0);
+  }, when * 1000);
 }
 
-function isInteger(s) {
-  for (i = 0; i < s.length; ++i) {
-    if (s[i] >= 0 && s[i] <= 9) {
-      continue;
+function playImage(src, when) {
+  setTimeout(function() {
+    var img = document.createElement('img');
+    img.src = src;
+    img.className = 'cat-img';
+    var margin = 150;
+    img.style.left = margin + Math.random() * (window.innerWidth - 150 - margin * 2) + 'px';
+    img.style.top = margin + Math.random() * (window.innerHeight - 150 - margin * 2) + 'px';
+    img.style.setProperty('--base-rotate', (Math.random() * 120 - 60) + 'deg');
+    document.body.appendChild(img);
+    img.addEventListener('animationend', function() {
+      img.remove();
+    });
+  }, when * 1000);
+}
+
+function playBorderImage(src, when) {
+  setTimeout(function() {
+    var img = document.createElement('img');
+    img.src = src;
+    img.className = 'cat-border-img';
+
+    // Pick a random edge: 0=bottom, 1=top, 2=left, 3=right
+    var edge = Math.floor(Math.random() * 4);
+    if (edge === 0) {
+      // bottom: peek up, upright
+      img.style.bottom = '0';
+      img.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+      img.style.setProperty('--peek-from', '0 100%');
+      img.style.setProperty('--peek-to', '0 20%');
+    } else if (edge === 1) {
+      // top: peek down, flipped
+      img.style.top = '0';
+      img.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+      img.style.rotate = '180deg';
+      img.style.setProperty('--peek-from', '0 -100%');
+      img.style.setProperty('--peek-to', '0 -20%');
+    } else if (edge === 2) {
+      // left: peek right, rotated 90
+      img.style.left = '0';
+      img.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+      img.style.rotate = '90deg';
+      img.style.setProperty('--peek-from', '-100% 0');
+      img.style.setProperty('--peek-to', '-20% 0');
     } else {
-      return false;
+      // right: peek left, rotated 270
+      img.style.right = '0';
+      img.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+      img.style.rotate = '270deg';
+      img.style.setProperty('--peek-from', '100% 0');
+      img.style.setProperty('--peek-to', '20% 0');
     }
-  }
-  return true;
+
+    document.body.appendChild(img);
+    img.addEventListener('animationend', function() {
+      img.remove();
+    });
+  }, when * 1000);
 }
 
-function randomSounds() {
-  // The web audio API needs a user gesture before it can
-  // actually play something.
+function randomMeow() {
+  if (!soundsLoaded) return;
   context.resume();
 
-  var startTime = context.currentTime + 1;
-  var howLong = document.getElementById('howLong').value;
-  if (!isInteger(howLong) || howLong < 1 || howLong > 60) {
-    alert('invalid number for step 1');
-    return;
+  var howOften = document.getElementById('intensity').value;
+  var howLong = howOften <= 5 ? 1 : 10;
+
+  // Build array of times, guaranteeing at least 1 per second
+  var times = [];
+  var seconds = Math.floor(howLong);
+  for (var s = 0; s < seconds && times.length < howOften; s++) {
+    times.push(s + Math.random());
   }
-    
-  var howOften = document.getElementById('howOften').value;
-  if (!isInteger(howOften) || howOften < 1 || howOften > 100) {
-    alert('invalid number for step 2');
-    return;
+  while (times.length < howOften) {
+    times.push(Math.random() * howLong);
   }
+
   for (i = 0; i < howOften; ++i) {
-    var which = Math.floor(Math.random() * urls.length);
-    var when = Math.random() * howLong;
-    playSound(which, startTime + when);
+    var whichSound = Math.floor(Math.random() * urls.length);
+    var whichImage = Math.floor(Math.random() * allImages.length);
+    var imageSrc = allImages[whichImage];
+    var when = times[i];
+    playSound(whichSound, when);
+    if (borderImages[imageSrc]) {
+      playBorderImage(imageSrc, when);
+    } else {
+      playImage(imageSrc, when);
+    }
   }
 }
 
-window.addEventListener('load', init, false);
+function updateButton(value) {
+  var t = (value - 1) / 998;
+  var r = Math.round(107 + t * 148);
+  var g = Math.round(159 - t * 77);
+  var b = Math.round(255 - t * 173);
+  var btn = document.getElementById('start-btn');
+  var light = 'rgb(' + Math.min(r + 40, 255) + ',' + Math.min(g + 40, 255) + ',' + Math.min(b + 40, 255) + ')';
+  var dark = 'rgb(' + r + ',' + g + ',' + b + ')';
+  btn.style.background = 'linear-gradient(145deg, ' + light + ', ' + dark + ')';
+  if (soundsLoaded) {
+    btn.innerHTML = value + '<br>Meows!';
+  }
+
+  btn.classList.remove('charge-1', 'charge-2', 'charge-3');
+  if (value >= 999) {
+    btn.classList.add('charge-3');
+  } else if (value >= 500) {
+    btn.classList.add('charge-2');
+  } else if (value >= 100) {
+    btn.classList.add('charge-1');
+  }
+}
+
+window.addEventListener('load', function() {
+  init();
+  document.getElementById('start-btn').addEventListener('click', randomMeow);
+  updateButton(document.getElementById('intensity').value);
+}, false);

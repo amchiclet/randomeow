@@ -1,35 +1,173 @@
 <html>
 <head>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap">
 <style>
-#content { width: 400px; margin: 0 auto;}
-h1,h2 { margin: 0; }
-input { margin: 10px; }
-hr { margin-bottom: 10px; }
+html, body { height: 100%; margin: 0; font-family: 'Quicksand', sans-serif; background: #111; color: #eee; overflow: hidden; }
+body { display: flex; justify-content: center; align-items: center; }
+#content { position: relative; z-index: 1; text-align: center; }
+#github-link { position: fixed; bottom: 10px; right: 10px; font-size: 12px; z-index: 1; }
+#github-link a { color: #666; }
+
+#intensity-container {
+  margin: 20px auto;
+  width: 300px;
+}
+
+#intensity-label {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+#intensity {
+  width: 100%;
+  height: 20px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #333;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+#intensity::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  cursor: pointer;
+}
+
+#intensity::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  border: none;
+  cursor: pointer;
+}
+
+#start-btn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(145deg, #ff7b7b, #ff5252);
+  box-shadow: 5px 5px 10px #000, -3px -3px 8px #333;
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 20px auto;
+  display: block;
+  transition: box-shadow 0.3s, transform 0.1s;
+  user-select: none;
+}
+
+#start-btn.charge-1 {
+  animation: charge1 0.8s ease-in-out infinite;
+  box-shadow: 0 0 15px 5px rgba(255, 200, 50, 0.5);
+}
+
+#start-btn.charge-2 {
+  animation: charge2 0.5s ease-in-out infinite;
+  box-shadow: 0 0 30px 10px rgba(255, 150, 0, 0.7);
+}
+
+#start-btn.charge-3 {
+  animation: charge3 0.3s ease-in-out infinite;
+  box-shadow: 0 0 50px 20px rgba(255, 50, 0, 0.8), 0 0 80px 40px rgba(255, 200, 0, 0.3);
+}
+
+@keyframes charge1 {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes charge2 {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes charge3 {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.08) rotate(-1deg); }
+  50% { transform: scale(1.1) rotate(0deg); }
+  75% { transform: scale(1.08) rotate(1deg); }
+}
+
+#start-btn:active {
+  transform: scale(0.92);
+  box-shadow: 2px 2px 5px #000, -1px -1px 3px #333;
+}
+
+#start-btn:disabled {
+  background: linear-gradient(145deg, #ccc, #aaa);
+  cursor: not-allowed;
+}
+
+#btn-hint {
+  font-size: 14px;
+  color: #bbb;
+}
+
+
+.cat-img {
+  position: fixed;
+  width: 150px;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+  animation: catPop 1.5s ease-out forwards;
+}
+
+@keyframes catPop {
+  0%   { opacity: 0; transform: rotate(var(--base-rotate)) scale(0.2); }
+  20%  { opacity: 1; transform: rotate(var(--base-rotate)) scale(1.1); }
+  40%  { transform: rotate(calc(var(--base-rotate) + 15deg)) scale(1); }
+  60%  { transform: rotate(calc(var(--base-rotate) - 15deg)) scale(1); }
+  80%  { opacity: 1; transform: rotate(calc(var(--base-rotate) + 8deg)) scale(1); }
+  100% { opacity: 0; transform: rotate(var(--base-rotate)) scale(0.5) translateY(-40px); }
+}
+
+.cat-border-img {
+  position: fixed;
+  width: 150px;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+  animation: catPeek 2s ease-in-out forwards;
+}
+
+@keyframes catPeek {
+  0%   { translate: var(--peek-from); filter: drop-shadow(0 0 0px transparent); }
+  20%  { translate: var(--peek-to); filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.6)); }
+  35%  { translate: var(--peek-to); filter: drop-shadow(0 0 25px rgba(255, 200, 100, 0.9)); }
+  50%  { translate: var(--peek-to); filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.4)); }
+  65%  { translate: var(--peek-to); filter: drop-shadow(0 0 20px rgba(255, 200, 100, 0.8)); }
+  80%  { translate: var(--peek-to); filter: drop-shadow(0 0 5px rgba(255, 200, 100, 0.3)); }
+  100% { translate: var(--peek-from); filter: drop-shadow(0 0 0px transparent); }
+}
 </style>
 <script src="randomeow.js"></script>
 </head>
 <body>
 
 <div id="content">
+<h1>Ten Seconds of Meows</h1>
 
-<div><h1>Random Meows</h1></div>
-
-<hr />
-
-<div><h2>Step 1: How long? (Enter 1-60)</h2>
-<input id="howLong" value=10 style="width:50px;"> seconds.
+<div id="intensity-container">
+  <div id="intensity-label">intensity</div>
+  <input type="range" id="intensity" min="1" max="999" value="1" oninput="updateButton(this.value)">
 </div>
 
-<div><h2>Step 2: How many? (Enter 1-100)</h2>
-<input id="howOften" value=30 style="width:50px;"> meows.
+<div id="btn-hint">&darr; go ahead, mash it &darr;</div>
+<button id="start-btn" disabled>...</button>
 </div>
 
-<div><h2>Step 3:</h2> <input type="button" id="playSoundsButton" value="Loading sounds ..." disabled onclick=randomSounds()></div>
-
-<hr />
-
-<div><a href="https://github.com/amchiclet/randomeow"><img src="GitHub_Logo.png" border="1"></a></div>
-
-</div>
-<body>
+<div id="github-link"><a href="https://github.com/amchiclet/randomeow">randomeow</a></div>
+</body>
 </html>
