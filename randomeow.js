@@ -57,14 +57,15 @@ function playSound(which, when) {
   }, when * 1000);
 }
 
-function playImage(src, when) {
+function playImage(src, when, size) {
   setTimeout(function() {
     var img = document.createElement('img');
     img.src = src;
     img.className = 'cat-img';
-    var margin = 150;
-    img.style.left = margin + Math.random() * (window.innerWidth - 150 - margin * 2) + 'px';
-    img.style.top = margin + Math.random() * (window.innerHeight - 150 - margin * 2) + 'px';
+    img.style.width = size + 'px';
+    var margin = size;
+    img.style.left = margin + Math.random() * (window.innerWidth - size - margin * 2) + 'px';
+    img.style.top = margin + Math.random() * (window.innerHeight - size - margin * 2) + 'px';
     img.style.setProperty('--base-rotate', (Math.random() * 120 - 60) + 'deg');
     document.body.appendChild(img);
     img.addEventListener('animationend', function() {
@@ -73,11 +74,12 @@ function playImage(src, when) {
   }, when * 1000);
 }
 
-function playBorderImage(src, when) {
+function playBorderImage(src, when, size) {
   setTimeout(function() {
     var img = document.createElement('img');
     img.src = src;
     img.className = 'cat-border-img';
+    img.style.width = size + 'px';
 
     // Pick a random edge: 0=bottom, 1=top, 2=left, 3=right
     var edge = Math.floor(Math.random() * 4);
@@ -122,7 +124,11 @@ function randomMeow() {
   context.resume();
 
   var howOften = document.getElementById('intensity').value;
-  var howLong = howOften <= 5 ? 1 : 10;
+  var howLong = howOften <= 5 ? 1 : 5;
+  // Image size range shrinks with intensity: 150-200px at 1, 10-50px at 999
+  var t = (howOften - 1) / 998;
+  var minSize = Math.round(150 - t * 140);
+  var maxSize = Math.round(200 - t * 150);
 
   // Build array of times, guaranteeing at least 1 per second
   var times = [];
@@ -140,10 +146,11 @@ function randomMeow() {
     var imageSrc = allImages[whichImage];
     var when = times[i];
     playSound(whichSound, when);
+    var imgSize = Math.round(minSize + Math.random() * (maxSize - minSize));
     if (borderImages[imageSrc]) {
-      playBorderImage(imageSrc, when);
+      playBorderImage(imageSrc, when, imgSize);
     } else {
-      playImage(imageSrc, when);
+      playImage(imageSrc, when, imgSize);
     }
   }
 }
