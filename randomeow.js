@@ -59,23 +59,36 @@ function playSound(which, when) {
 
 function playImage(src, when, size) {
   setTimeout(function() {
+    var wrapper = document.createElement('div');
+    wrapper.style.position = 'fixed';
+    wrapper.style.pointerEvents = 'none';
+    wrapper.style.zIndex = '0';
+    var margin = size;
+    wrapper.style.left = margin + Math.random() * (window.innerWidth - size - margin * 2) + 'px';
+    wrapper.style.top = margin + Math.random() * (window.innerHeight - size - margin * 2) + 'px';
+    var flip = Math.random();
+    if (flip < 0.33) wrapper.style.transform = 'scaleX(-1)';
+    else if (flip < 0.66) wrapper.style.transform = 'scaleY(-1)';
     var img = document.createElement('img');
     img.src = src;
     img.className = 'cat-img';
     img.style.width = size + 'px';
-    var margin = size;
-    img.style.left = margin + Math.random() * (window.innerWidth - size - margin * 2) + 'px';
-    img.style.top = margin + Math.random() * (window.innerHeight - size - margin * 2) + 'px';
     img.style.setProperty('--base-rotate', (Math.random() * 120 - 60) + 'deg');
-    document.body.appendChild(img);
+    wrapper.appendChild(img);
+    document.body.appendChild(wrapper);
     img.addEventListener('animationend', function() {
-      img.remove();
+      wrapper.remove();
     });
   }, when * 1000);
 }
 
 function playBorderImage(src, when, size) {
   setTimeout(function() {
+    var wrapper = document.createElement('div');
+    wrapper.style.position = 'fixed';
+    wrapper.style.pointerEvents = 'none';
+    wrapper.style.zIndex = '0';
+
     var img = document.createElement('img');
     img.src = src;
     img.className = 'cat-border-img';
@@ -85,36 +98,42 @@ function playBorderImage(src, when, size) {
     var edge = Math.floor(Math.random() * 4);
     if (edge === 0) {
       // bottom: peek up, upright
-      img.style.bottom = '0';
-      img.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+      wrapper.style.top = (window.innerHeight - size) + 'px';
+      wrapper.style.left = Math.random() * (window.innerWidth - size) + 'px';
       img.style.setProperty('--peek-from', '0 100%');
       img.style.setProperty('--peek-to', '0 20%');
     } else if (edge === 1) {
       // top: peek down, flipped
-      img.style.top = '0';
-      img.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+      wrapper.style.top = '0';
+      wrapper.style.left = Math.random() * (window.innerWidth - size) + 'px';
       img.style.rotate = '180deg';
       img.style.setProperty('--peek-from', '0 -100%');
       img.style.setProperty('--peek-to', '0 -20%');
     } else if (edge === 2) {
       // left: peek right, rotated 90
-      img.style.left = '0';
-      img.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+      wrapper.style.left = '0';
+      wrapper.style.top = Math.random() * (window.innerHeight - size) + 'px';
       img.style.rotate = '90deg';
       img.style.setProperty('--peek-from', '-100% 0');
       img.style.setProperty('--peek-to', '-20% 0');
     } else {
       // right: peek left, rotated 270
-      img.style.right = '0';
-      img.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+      wrapper.style.left = (window.innerWidth - size) + 'px';
+      wrapper.style.top = Math.random() * (window.innerHeight - size) + 'px';
       img.style.rotate = '270deg';
       img.style.setProperty('--peek-from', '100% 0');
       img.style.setProperty('--peek-to', '20% 0');
     }
 
-    document.body.appendChild(img);
+    if (Math.random() < 0.5) {
+      if (edge <= 1) wrapper.style.transform = 'scaleX(-1)';
+      else wrapper.style.transform = 'scaleY(-1)';
+    }
+
+    wrapper.appendChild(img);
+    document.body.appendChild(wrapper);
     img.addEventListener('animationend', function() {
-      img.remove();
+      wrapper.remove();
     });
   }, when * 1000);
 }
