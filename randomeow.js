@@ -171,8 +171,6 @@ function updateButton(value) {
   }
 }
 
-window.addEventListener('load', function() {
-  init();
-  document.getElementById('start-btn').addEventListener('click', randomMeow);
-  updateButton(document.getElementById('intensity').value);
-}, false);
+init();
+document.getElementById('start-btn').addEventListener('click', randomMeow);
+updateButton(document.getElementById('intensity').value);
